@@ -7,22 +7,27 @@
     'use strict';
     console.log('init');
 
-
+    var upateIntervalID;
     var gamePaused = false;
 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
 
     var paddle = {
-        size: {
-            height: 20,
-            width: 100,
-        }
-        , position: {
-            x: 0,
-            y: 0
-        }
+        size: { width: 100, height: 20 }
+        , position: { x: 0, y: 0 }
     };
+
+    var ball = {
+        size: { width: 12, height: 12 }
+        , position: { x: 0, y: 0 }
+        , speed: { x: 1, y: 1 }
+    };
+
+    function update() {
+        ball.position.x += ball.speed.x;
+        ball.position.y += ball.speed.y;
+    }
 
     function draw() {
                 
@@ -34,11 +39,16 @@
         ctx.fillStyle = 'yellow';
         ctx.fillRect(paddle.position.x, canvas.height - paddle.size.height - 50, paddle.size.width,
             paddle.size.height);
+            
+        // draw ball
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(ball.position.x, ball.position.y, ball.size.width, ball.size.height);
 
         if (gamePaused) {
             ctx.fillStyle = 'yellow';
             ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
         }
+        requestAnimationFrame(draw);
     }
 
     function onWindowResize(event) {
@@ -61,11 +71,7 @@
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('keydown', function onKeyDown(keyboardEvent) {
             if (keyboardEvent.keyCode === 80) {
-                if (gamePaused) {
-                    appResume();
-                } else {
-                    appPause();
-                }
+                gamePaused ? appResume() : appPause();
             }
         });
 
@@ -76,15 +82,16 @@
 
     function enableInGameListeners() {
         window.addEventListener('mousemove', paddleUpdateOnMouseMove);
+        upateIntervalID = window.setInterval(update, 1000 / 60);
     }
-    
+
     function disableInGameListeners() {
         window.removeEventListener('mousemove', paddleUpdateOnMouseMove);
+        window.clearTimeout(upateIntervalID);
     }
 
     function paddleUpdateOnMouseMove(mouseEvent) {
         paddle.position.x = mouseEvent.clientX - paddle.size.width / 2;
-        requestAnimationFrame(draw);
     }
 
     function appResume(params) {
@@ -95,10 +102,6 @@
     function appPause(params) {
         gamePaused = true;
         disableInGameListeners();
-    }
-
-    function pauseApp() {
-        gamePaused = true;
     }
 
     appStart();
