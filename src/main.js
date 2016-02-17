@@ -24,7 +24,14 @@
         , speed: { x: 1, y: 1 }
     };
 
+    var mouseTarget = {
+        x: null
+        , y: null
+    }
+
     function update() {
+        paddle.position.x = mouseTarget.x - paddle.size.width / 2;
+        
         ball.position.x += ball.speed.x;
         ball.position.y += ball.speed.y;
     }
@@ -91,7 +98,7 @@
     }
 
     function paddleUpdateOnMouseMove(mouseEvent) {
-        paddle.position.x = mouseEvent.clientX - paddle.size.width / 2;
+        mouseTarget.x = mouseEvent.clientX;
     }
 
     function appResume(params) {
