@@ -1,0 +1,16 @@
+{
+  "name": "brekoutjs",
+  "version": "0.0.1",
+  "description": "attempt to recreate simple but playable html version of classic breakout game.",
+  "main": "main.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-serve": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Antoine Malpel",
+  "license": "ISC"
+}
