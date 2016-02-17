@@ -61,18 +61,32 @@
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('keydown', function onKeyDown(keyboardEvent) {
             console.log('onkeydown ', keyboardEvent);
+            if (keyboardEvent.keyCode === 80) {
+                if (gamePaused) {
+                    appResume();
+                } else {
+                    appPause();
+                }
+            }
         });
 
-        window.addEventListener('mousemove', function onMouseMove(mouveEvent) {
-            paddle.position.x = mouveEvent.clientX;
-            requestAnimationFrame(draw);
-        });
         initDraw();
+        setInGameListeners();
+        requestAnimationFrame(draw);
+    }
+
+    function setInGameListeners() {
+        window.addEventListener('mousemove', paddleUpdateOnMouseMove);
+    }
+
+    function paddleUpdateOnMouseMove(mouseEvent) {
+        paddle.position.x = mouseEvent.clientX;
         requestAnimationFrame(draw);
     }
 
     function appResume(params) {
         gamePaused = false;
+        setInGameListeners();
     }
 
     function appPause(params) {
