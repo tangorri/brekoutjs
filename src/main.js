@@ -60,7 +60,6 @@
         document.body.appendChild(canvas);
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('keydown', function onKeyDown(keyboardEvent) {
-            console.log('onkeydown ', keyboardEvent);
             if (keyboardEvent.keyCode === 80) {
                 if (gamePaused) {
                     appResume();
@@ -71,26 +70,31 @@
         });
 
         initDraw();
-        setInGameListeners();
+        enableInGameListeners();
         requestAnimationFrame(draw);
     }
 
-    function setInGameListeners() {
+    function enableInGameListeners() {
         window.addEventListener('mousemove', paddleUpdateOnMouseMove);
+    }
+    
+    function disableInGameListeners() {
+        window.removeEventListener('mousemove', paddleUpdateOnMouseMove);
     }
 
     function paddleUpdateOnMouseMove(mouseEvent) {
-        paddle.position.x = mouseEvent.clientX;
+        paddle.position.x = mouseEvent.clientX - paddle.size.width / 2;
         requestAnimationFrame(draw);
     }
 
     function appResume(params) {
         gamePaused = false;
-        setInGameListeners();
+        enableInGameListeners();
     }
 
     function appPause(params) {
         gamePaused = true;
+        disableInGameListeners();
     }
 
     function pauseApp() {
