@@ -25,10 +25,7 @@
         , impacts: 0
     };
 
-    var mouseTarget = {
-        x: null
-        , y: null
-    }
+    var mouseTarget = { x: null, y: null };
 
     function update() {
         paddle.position.x = mouseTarget.x - paddle.size.width / 2;
@@ -38,11 +35,11 @@
             paddle.position.x = canvas.width - paddle.size.width; 
         }
 
-        // collision with screen and ball lost
-        if (ball.position.x + ball.size.width >= canvas.width && ball.speed.x > 0) {
+        // collision with screen
+        if (ball.speed.x > 0 && ball.position.x + ball.size.width >= canvas.width) {
             ball.speed.x *= -1;
             ballImpact(ball);
-        } else if (ball.position.x - ball.size.width <= 0 && ball.speed.x < 0) {
+        } else if (ball.position.x <= 0 && ball.speed.x < 0) {
             ball.speed.x *= -1;
             ballImpact(ball);
         }
