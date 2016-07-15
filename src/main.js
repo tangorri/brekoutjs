@@ -22,6 +22,7 @@
         size: { width: 12, height: 12 }
         , position: { x: 0, y: 0 }
         , speed: { x: 1, y: 1 }
+        , impacts: 0
     };
 
     var mouseTarget = {
@@ -31,16 +32,24 @@
 
     function update() {
         paddle.position.x = mouseTarget.x - paddle.size.width / 2;
+        if (paddle.position.x < 0) {
+            paddle.position.x = 0;
+        } else if (paddle.position.x + paddle.size.width > canvas.width) {
+            paddle.position.x = canvas.width - paddle.size.width; 
+        }
 
         // collision with screen and ball lost
         if (ball.position.x + ball.size.width >= canvas.width && ball.speed.x > 0) {
             ball.speed.x *= -1;
+            ballImpact(ball);
         } else if (ball.position.x - ball.size.width <= 0 && ball.speed.x < 0) {
             ball.speed.x *= -1;
+            ballImpact(ball);
         }
 
         if (ball.position.y < 0 && ball.speed.y < 0) {
             ball.speed.y *= -1;
+            ballImpact(ball);
         } else if(ball.position.y > canvas.height) {
             ballLost(ball);
         } else {
@@ -50,6 +59,7 @@
                 (ball.position.x + ball.size.width > paddle.position.x) &&
                 (ball.position.x - ball.size.width) < paddle.position.x + paddle.size.width) {
                 ball.speed.y *= -1;
+                ballImpact(ball);
             }
         }
 
@@ -111,6 +121,14 @@
         initDraw();
         enableInGameListeners();
         requestAnimationFrame(draw);
+    }
+
+    function ballImpact(ball) {
+        if(++ball.impacts > 4 && ball.speed.x < 3) {
+            ball.impacts = 0;
+            ball.speed.x *= 1.2;
+            ball.speed.y *= 1.2;
+        }
     }
 
     function ballLost(ball) {
