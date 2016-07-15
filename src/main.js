@@ -25,6 +25,8 @@
         , impacts: 0
     };
 
+    var bricks = [];
+
     var mouseTarget = { x: null, y: null };
 
     function update() {
@@ -79,6 +81,12 @@
         ctx.fillStyle = 'yellow';
         ctx.fillRect(ball.position.x, ball.position.y, ball.size.width, ball.size.height);
 
+        // draw bircks
+        bricks.forEach(function(brick, index) {
+            ctx.fillStyle = (index % 2 > 0) ? 'red' : 'green';
+            ctx.fillRect(brick.position.x, brick.position.y, brick.size.width, brick.size.height);
+        });
+
         if (gamePaused) {
             ctx.fillStyle = 'yellow';
             ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
@@ -102,6 +110,22 @@
 
         paddle.position.y = canvas.height - 50;
 
+        var brickSize = {
+            width: canvas.width / 10,
+            height: canvas.width / 10 * 3 / 4
+        };
+
+        bricks.forEach(function(brick, brickIndex) {
+            brick.position = {
+                x: (brickIndex % 10) * brickSize.width,
+                // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
+                y: (~~(brickIndex / 10)) * brickSize.height
+            };
+
+
+            brick.size = brickSize
+        });
+
         draw();
     }
 
@@ -114,6 +138,7 @@
             }
         });
 
+        initLevel();
         initBall(ball);
         initDraw();
         enableInGameListeners();
@@ -130,6 +155,14 @@
 
     function ballLost(ball) {
         initBall(ball);
+    }
+
+    function initLevel() {
+        var brickIndex;
+        bricks = [];
+        for (brickIndex = 0; brickIndex < 4 * 10; brickIndex++) {
+            bricks.push({});
+        }
     }
 
     function initBall(ball) {
