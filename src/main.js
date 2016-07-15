@@ -15,7 +15,7 @@
 
     var paddle = {
         size: { width: 100, height: 20 }
-        , position: { x: 0, y: 0 }
+        , position: { x: 0, y: canvas.height - 50 }
     };
 
     var ball = {
@@ -31,22 +31,43 @@
 
     function update() {
         paddle.position.x = mouseTarget.x - paddle.size.width / 2;
-        
+
+        // collision with screen and ball lost
+        if (ball.position.x + ball.size.width >= canvas.width && ball.speed.x > 0) {
+            ball.speed.x *= -1;
+        } else if (ball.position.x - ball.size.width <= 0 && ball.speed.x < 0) {
+            ball.speed.x *= -1;
+        }
+
+        if (ball.position.y < 0 && ball.speed.y < 0) {
+            ball.speed.y *= -1;
+        } else if(ball.position.y > canvas.height) {
+            ballLost(ball);
+        } else {
+
+            if (ball.speed.y > 0 && 
+                (ball.position.y + ball.size.height > paddle.position.y) &&
+                (ball.position.x + ball.size.width > paddle.position.x) &&
+                (ball.position.x - ball.size.width) < paddle.position.x + paddle.size.width) {
+                ball.speed.y *= -1;
+            }
+        }
+
         ball.position.x += ball.speed.x;
         ball.position.y += ball.speed.y;
     }
 
     function draw() {
-                
+
         // draw background
         ctx.fillStyle = 'blue';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // draw player's paddle
         ctx.fillStyle = 'yellow';
-        ctx.fillRect(paddle.position.x, canvas.height - paddle.size.height - 50, paddle.size.width,
+        ctx.fillRect(paddle.position.x, paddle.position.y, paddle.size.width,
             paddle.size.height);
-            
+
         // draw ball
         ctx.fillStyle = 'yellow';
         ctx.fillRect(ball.position.x, ball.position.y, ball.size.width, ball.size.height);
@@ -55,6 +76,7 @@
             ctx.fillStyle = 'yellow';
             ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
         }
+
         requestAnimationFrame(draw);
     }
 
@@ -70,6 +92,9 @@
     function initDraw() {
         canvas.width = window.innerWidth - 200;
         canvas.height = Math.round(canvas.width * 4 / 6);
+
+        paddle.position.y = canvas.height - 50;
+
         draw();
     }
 
@@ -82,9 +107,19 @@
             }
         });
 
+        initBall(ball);
         initDraw();
         enableInGameListeners();
         requestAnimationFrame(draw);
+    }
+
+    function ballLost(ball) {
+        initBall(ball);
+    }
+
+    function initBall(ball) {
+        ball.position = { x: canvas.width / 3, y: 0 };
+        ball.speed =  { x: 1, y: 1 };
     }
 
     function enableInGameListeners() {
