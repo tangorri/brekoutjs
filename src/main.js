@@ -51,14 +51,26 @@
             ballImpact(ball);
         } else if(ball.position.y > canvas.height) {
             ballLost(ball);
+        } else if (ball.speed.y > 0 && 
+            (ball.position.y + ball.size.height > paddle.position.y) &&
+            (ball.position.x + ball.size.width > paddle.position.x) &&
+            (ball.position.x - ball.size.width) < paddle.position.x + paddle.size.width) {
+            ball.speed.y *= -1;
+            ballImpact(ball);
         } else {
-
-            if (ball.speed.y > 0 && 
-                (ball.position.y + ball.size.height > paddle.position.y) &&
-                (ball.position.x + ball.size.width > paddle.position.x) &&
-                (ball.position.x - ball.size.width) < paddle.position.x + paddle.size.width) {
-                ball.speed.y *= -1;
-                ballImpact(ball);
+            // with bricks
+            for (var brickIndex = 0; brickIndex < bricks.length; ++ brickIndex) {
+                var brick = bricks[brickIndex];
+                if (ball.position.x > brick.position.x &&
+                ball.position.x + ball.size.width < brick.position.x + brick.size.width &&
+                ball.position.y > brick.position.y &&
+                ball.position.y + ball.size.height < brick.position.y + brick.size.height) {
+                    
+                   bricks.splice(brickIndex, 1);
+                    console.log('remove at ', brickIndex);
+                    console.log('bricks ', bricks);
+                    break;
+                }
             }
         }
 
@@ -119,7 +131,7 @@
             brick.position = {
                 x: (brickIndex % 10) * brickSize.width,
                 // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
-                y: (~~(brickIndex / 10)) * brickSize.height
+                y: (Math.floor(brickIndex / 10)) * brickSize.height
             };
 
 
@@ -163,6 +175,7 @@
         for (brickIndex = 0; brickIndex < 4 * 10; brickIndex++) {
             bricks.push({});
         }
+        console.log(bricks);
     }
 
     function initBall(ball) {
