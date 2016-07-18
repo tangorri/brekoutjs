@@ -1,5 +1,5 @@
 // BrekoutJS
-// by Antoine Malpel
+// by tangorri
 //
 /////////////////////
 
