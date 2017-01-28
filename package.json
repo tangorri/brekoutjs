@@ -1,6 +1,6 @@
 {
   "name": "brekoutjs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "attempt to recreate simple but playable html version of classic breakout game.",
   "main": "main.js",
   "dependencies": {
