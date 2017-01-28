@@ -9,6 +9,8 @@
   var upateIntervalID;
   var gamePaused = false;
 
+  var canvasMaxSize = { width: 320, height: 256 };
+  var canvasRatio = Math.round(canvasMaxSize.width / canvasMaxSize.height);
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
 
@@ -118,25 +120,31 @@
   }
 
   function initDraw() {
-    canvas.width = window.innerWidth - 200;
-    canvas.height = Math.round(canvas.width * 4 / 6);
 
-    paddle.position.y = canvas.height - 50;
 
-    var brickSize = {
-      width: canvas.width / 10,
-      height: canvas.width / 10 * 3 / 4
-    };
+    canvas.width = Math.min(window.innerWidth - 200, canvasMaxSize.width);
+    canvas.height = canvas.width / canvasRatio;
+
+    paddle.size.width = canvas.width / 5;
+    paddle.size.height = paddle.size.width / 8;
+
+    paddle.position.y = canvas.height * .9;
+
+    ball.size.height = ball.size.width = canvas.width / 50;
+
+    var bricksPerRow = 10;
+    var brickRatio = 3 / 4;
+
+    var brickWidth = canvas.width / bricksPerRow;
+    var brickHeight = brickWidth * brickRatio; 
 
     bricks.forEach(function (brick, brickIndex) {
       brick.position = {
-        x: (brickIndex % 10) * brickSize.width,
+        x: (brickIndex % 10) * brickWidth,
         // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
-        y: (Math.floor(brickIndex / 10)) * brickSize.height
+        y: (Math.floor(brickIndex / 10)) * brickHeight
       };
-
-
-      brick.size = brickSize
+      brick.size = {width: brickWidth, height: brickHeight };
     });
 
     draw();
