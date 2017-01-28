@@ -1,6 +1,6 @@
 # brekoutjs
 
-![alt tag](https://raw.githubusercontent.com/tangorri/brekoutjs/master/media/screenshot.png)
+![alt tag](https://raw.githubusercontent.com/tangorri/brekoutjs/master/medias/screenshot.png)
 
 
 Recreate simple but playable html version of classic breakout game. 
