@@ -8,6 +8,7 @@
 
   var upateIntervalID;
   var gamePaused = false;
+  var gameLost = false;
 
   var canvasMaxSize = { width: 320, height: 256 };
   var canvasRatio = Math.round(canvasMaxSize.width / canvasMaxSize.height);
@@ -25,6 +26,9 @@
     , speed: { x: 1, y: 1 }
     , impacts: 0
   };
+
+  var lifeLeft = 3;
+  var score = 0;
 
   var bricks = [];
 
@@ -47,11 +51,12 @@
       ballImpact(ball);
     }
 
+    // ball walls hit tests and reactions.
     if (ball.position.y < 0 && ball.speed.y < 0) {
       ball.speed.y *= -1;
       ballImpact(ball);
     } else if (ball.position.y > canvas.height) {
-      ballLost(ball);
+      onBallLost(ball);
     } else if (ball.speed.y > 0 &&
       (ball.position.y + ball.size.height > paddle.position.y) &&
       (ball.position.x + ball.size.width > paddle.position.x) &&
@@ -71,10 +76,11 @@
 
           // Remove Collided Brick.
           brick.ballCollision++;
+          score += 30;
         }
       }
 
-      bricks = bricks.filter(function(brick) { return brick.ballCollision === undefined });
+      bricks = bricks.filter(function (brick) { return brick.ballCollision === undefined });
     }
 
     ball.position.x += ball.speed.x;
@@ -96,17 +102,37 @@
     ctx.fillStyle = 'yellow';
     ctx.fillRect(ball.position.x, ball.position.y, ball.size.width, ball.size.height);
 
-    // draw bircks
+    // draw bricks
     bricks.forEach(function (brick, index) {
       ctx.fillStyle = brick.color;
       ctx.fillRect(brick.position.x, brick.position.y, brick.size.width, brick.size.height);
     });
+
+    var bottomTextBaseLine = canvas.height - 8;
+
+    // life
+    ctx.fillStyle = 'yellow';
+    ctx.fillText('LIFE : ', 20, bottomTextBaseLine);
+    for (var lifeDrawIndex = 0; lifeDrawIndex <= lifeLeft; ++lifeDrawIndex) {
+      ctx.fillRect(60 + (lifeDrawIndex * 10), bottomTextBaseLine - 10, 8, 8)
+    }
+
+    // Draw score
+    ctx.fillStyle = 'yellow';
+    ctx.fillText('SCORE: ' + score.toString(), canvas.width / 2, bottomTextBaseLine);
+
+    // Game State infos.
+    if (gameLost) {
+      ctx.fillStyle = 'yellow'
+      ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2)
+    }
 
     if (gamePaused) {
       ctx.fillStyle = 'yellow';
       ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
     }
 
+    // get this methode callback when browser render page.
     requestAnimationFrame(draw);
   }
 
@@ -135,7 +161,7 @@
     var brickRatio = 3 / 4;
 
     var brickWidth = canvas.width / bricksPerRow;
-    var brickHeight = brickWidth * brickRatio; 
+    var brickHeight = brickWidth * brickRatio;
 
     bricks.forEach(function (brick, brickIndex) {
       brick.position = {
@@ -143,7 +169,7 @@
         // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
         y: (Math.floor(brickIndex / 10)) * brickHeight
       };
-      brick.size = {width: brickWidth, height: brickHeight };
+      brick.size = { width: brickWidth, height: brickHeight };
     });
 
     draw();
@@ -173,15 +199,23 @@
     }
   }
 
-  function ballLost(ball) {
-    initBall(ball);
+  // Ball has been lost.
+  function onBallLost(ball) {
+    lifeLeft--;
+    // maybe that was the final fatal player mistake.
+    if (lifeLeft < 0) onGameLost();
+    else initBall(ball);
+  }
+
+  function onGameLost() {
+    gameLost = true;
   }
 
   function initLevel() {
     var brickIndex;
     bricks = [];
     for (brickIndex = 0; brickIndex < 4 * 10; brickIndex++) {
-      bricks.push({color:  (brickIndex % 2 > 0) ? 'red' : 'green'});
+      bricks.push({ color: (brickIndex % 2 > 0) ? 'red' : 'green' });
     }
     console.log(bricks);
   }
