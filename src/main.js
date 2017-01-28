@@ -59,7 +59,7 @@
       ball.speed.y *= -1;
       ballImpact(ball);
     } else {
-      // with bricks
+      // Hit Test for Ball with all Bricks.
       for (var brickIndex = 0; brickIndex < bricks.length; ++brickIndex) {
         var brick = bricks[brickIndex];
 
@@ -69,12 +69,12 @@
           ball.position.y > brick.position.y &&
           ball.position.y + ball.size.height < brick.position.y + brick.size.height) {
 
-          // Remove Collided Brick and escape loop.
-          // Only one brick disappear at time.
-          bricks.splice(brickIndex, 1);
-          break;
+          // Remove Collided Brick.
+          brick.ballCollision++;
         }
       }
+
+      bricks = bricks.filter(function(brick) { return brick.ballCollision === undefined });
     }
 
     ball.position.x += ball.speed.x;
