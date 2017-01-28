@@ -1,6 +1,11 @@
 # brekoutjs
-An aptempt to recreate simple but playable html version of classic breakout game. VanillaJS for now.
-This show a old classic way using a game loop. For nostalgic game developper.
+
+![alt tag](https://raw.githubusercontent.com/tangorri/brekoutjs/master/media/screenshot.png)
+
+
+Recreate simple but playable html version of classic breakout game. 
+Native HTML/JS es5.
+This show a old classic way using a game loop.
 
 I plan to switch to es6. 
 
