@@ -2,12 +2,12 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			            "name": "Launch localhost with sourcemaps",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:3000/",
-            "webRoot": "${workspaceRoot}/src",
-            "sourceMaps": true
+			"name": "Launch localhost with sourcemaps",
+			"type": "chrome",
+			"request": "launch",
+			"url": "http://localhost:3000/",
+			"webRoot": "${workspaceRoot}/src",
+			"sourceMaps": true
 		}
 	]
 }

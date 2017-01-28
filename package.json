@@ -7,9 +7,8 @@
     "gulp": "^3.9.1",
     "gulp-serve": "^1.2.0"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "http-server"
   },
   "author": "Antoine Malpel",
   "license": "ISC"
