@@ -98,7 +98,7 @@
 
     // draw bircks
     bricks.forEach(function (brick, index) {
-      ctx.fillStyle = (index % 2 > 0) ? 'red' : 'green';
+      ctx.fillStyle = brick.color;
       ctx.fillRect(brick.position.x, brick.position.y, brick.size.width, brick.size.height);
     });
 
@@ -120,7 +120,6 @@
   }
 
   function initDraw() {
-
 
     canvas.width = Math.min(window.innerWidth - 200, canvasMaxSize.width);
     canvas.height = canvas.width / canvasRatio;
@@ -182,7 +181,7 @@
     var brickIndex;
     bricks = [];
     for (brickIndex = 0; brickIndex < 4 * 10; brickIndex++) {
-      bricks.push({});
+      bricks.push({color:  (brickIndex % 2 > 0) ? 'red' : 'green'});
     }
     console.log(bricks);
   }
