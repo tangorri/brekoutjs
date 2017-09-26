@@ -3,38 +3,38 @@
 //
 /////////////////////
 
-(function main() {
+(main = () => {
   'use strict';
 
-  var upateIntervalID;
-  var gamePaused = false;
-  var gameLost = false;
+  let upateIntervalID;
+  let gamePaused = false;
+  let gameLost = false;
 
-  var canvasMaxSize = { width: 320, height: 256 };
-  var canvasRatio = Math.round(canvasMaxSize.width / canvasMaxSize.height);
-  var canvas = document.createElement('canvas');
-  var ctx = canvas.getContext('2d');
+  const canvasMaxSize = { width: 320, height: 256 };
+  const canvasRatio = Math.round(canvasMaxSize.width / canvasMaxSize.height);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
 
-  var paddle = {
+  let paddle = {
     size: { width: 100, height: 20 }
     , position: { x: 0, y: canvas.height - 50 }
   };
 
-  var ball = {
+  let ball = {
     size: { width: 12, height: 12 }
     , position: { x: 0, y: 0 }
     , speed: { x: 1, y: 1 }
     , impacts: 0
   };
 
-  var lifeLeft = 3;
-  var score = 0;
+  let lifeLeft = 3;
+  let score = 0;
 
-  var bricks = [];
+  let bricks = [];
 
-  var mouseTarget = { x: null, y: null };
+  let mouseTarget = { x: null, y: null };
 
-  function update() {
+  const update = () => {
     paddle.position.x = mouseTarget.x - paddle.size.width / 2;
     if (paddle.position.x < 0) {
       paddle.position.x = 0;
@@ -65,29 +65,43 @@
       ballImpact(ball);
     } else {
       // Hit Test for Ball with all Bricks.
-      for (var brickIndex = 0; brickIndex < bricks.length; ++brickIndex) {
-        var brick = bricks[brickIndex];
+      for (let singleBrick of bricks) {
+        let brick = singleBrick;
 
         // Ball and Brick HitTest.
+        //if (ball.speed > 0) {
         if (ball.position.x > brick.position.x &&
           ball.position.x + ball.size.width < brick.position.x + brick.size.width &&
           ball.position.y > brick.position.y &&
           ball.position.y + ball.size.height < brick.position.y + brick.size.height) {
-
+          console.log('\n!!! --- hitting brick --- !!!\n');
+          if (Math.abs(ball.speed.x) > 2 || Math.abs(ball.speed.y) > 2) {
+            ball.speed.x *= -(0.5 + Math.random(9));
+            ball.speed.y *= -(0.5 + Math.random(9));
+          } else {
+            ball.speed.x *= -(1 + Math.random(9));
+            ball.speed.y *= -(1 + Math.random(9));
+          }
+          ballImpact(ball);
           // Remove Collided Brick.
           brick.ballCollision++;
           score += 30;
+          // }
         }
       }
 
-      bricks = bricks.filter(function (brick) { return brick.ballCollision === undefined });
+      bricks = bricks.filter(
+        (brick) => {
+          return brick.ballCollision === undefined
+        }
+      );
     }
 
     ball.position.x += ball.speed.x;
     ball.position.y += ball.speed.y;
   }
 
-  function draw() {
+  const draw = () => {
 
     // draw background
     ctx.fillStyle = 'blue';
@@ -103,17 +117,17 @@
     ctx.fillRect(ball.position.x, ball.position.y, ball.size.width, ball.size.height);
 
     // draw bricks
-    bricks.forEach(function (brick, index) {
+    for (let brick of bricks) {
       ctx.fillStyle = brick.color;
       ctx.fillRect(brick.position.x, brick.position.y, brick.size.width, brick.size.height);
-    });
+    };
 
-    var bottomTextBaseLine = canvas.height - 8;
+    const bottomTextBaseLine = canvas.height - 8;
 
     // life
     ctx.fillStyle = 'yellow';
     ctx.fillText('LIFE : ', 20, bottomTextBaseLine);
-    for (var lifeDrawIndex = 0; lifeDrawIndex <= lifeLeft; ++lifeDrawIndex) {
+    for (let lifeDrawIndex = 0; lifeDrawIndex <= lifeLeft; ++lifeDrawIndex) {
       ctx.fillRect(60 + (lifeDrawIndex * 10), bottomTextBaseLine - 10, 8, 8)
     }
 
@@ -136,16 +150,16 @@
     requestAnimationFrame(draw);
   }
 
-  function onWindowResize(event) {
+  const onWindowResize = (event) => {
     resizeCanvas(canvas, window.innerWidth, window.innerHeight);
   }
 
-  function resizeCanvas(canvas, width, height) {
+  const resizeCanvas = (canvas, width, height) => {
     initDraw();
     requestAnimationFrame(draw);
   }
 
-  function initDraw() {
+  const initDraw = () => {
 
     canvas.width = Math.min(window.innerWidth - 200, canvasMaxSize.width);
     canvas.height = canvas.width / canvasRatio;
@@ -157,32 +171,43 @@
 
     ball.size.height = ball.size.width = canvas.width / 50;
 
-    var bricksPerRow = 10;
-    var brickRatio = 3 / 4;
+    const bricksPerRow = 10;
+    const brickRatio = 3 / 4;
 
-    var brickWidth = canvas.width / bricksPerRow;
-    var brickHeight = brickWidth * brickRatio;
+    let brickWidth = canvas.width / bricksPerRow;
+    let brickHeight = brickWidth * brickRatio;
 
-    bricks.forEach(function (brick, brickIndex) {
+    for (let brick of bricks) {
+      const brickIndex = bricks.indexOf(brick);
       brick.position = {
         x: (brickIndex % 10) * brickWidth,
-        // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
         y: (Math.floor(brickIndex / 10)) * brickHeight
       };
       brick.size = { width: brickWidth, height: brickHeight };
-    });
+    };
+
+    // bricks.forEach((brick, brickIndex) {
+    //   brick.position = {
+    //     x: (brickIndex % 10) * brickWidth,
+    //     // @wtfJS http://stackoverflow.com/questions/4228356/integer-division-in-javascript
+    //     y: (Math.floor(brickIndex / 10)) * brickHeight
+    //   };
+    //   brick.size = { width: brickWidth, height: brickHeight };
+    // });
 
     draw();
   }
 
-  function appStart() {
+  const appStart = () => {
     document.body.appendChild(canvas);
     window.addEventListener('resize', onWindowResize);
-    window.addEventListener('keydown', function onKeyDown(keyboardEvent) {
-      if (keyboardEvent.keyCode === 80) {
-        gamePaused ? appResume() : appPause();
-      }
-    });
+    window.addEventListener(
+      'keydown',
+      (keyboardEvent) => {
+        if (keyboardEvent.keyCode === 80) {
+          gamePaused ? appResume() : appPause();
+        }
+      });
 
     initLevel();
     initBall(ball);
@@ -191,7 +216,7 @@
     requestAnimationFrame(draw);
   }
 
-  function ballImpact(ball) {
+  const ballImpact = (ball) => {
     if (++ball.impacts > 4 && ball.speed.x < 3) {
       ball.impacts = 0;
       ball.speed.x *= 1.2;
@@ -200,51 +225,51 @@
   }
 
   // Ball has been lost.
-  function onBallLost(ball) {
+  const onBallLost = (ball) => {
     lifeLeft--;
     // maybe that was the final fatal player mistake.
     if (lifeLeft < 0) onGameLost();
     else initBall(ball);
   }
 
-  function onGameLost() {
+  const onGameLost = () => {
     gameLost = true;
   }
 
-  function initLevel() {
+  const initLevel = () => {
     var brickIndex;
     bricks = [];
-    for (brickIndex = 0; brickIndex < 4 * 10; brickIndex++) {
+    for (brickIndex = 0; brickIndex < 40; brickIndex++) {
       bricks.push({ color: (brickIndex % 2 > 0) ? 'red' : 'green' });
     }
     console.log(bricks);
   }
 
-  function initBall(ball) {
+  const initBall = (ball) => {
     ball.position = { x: canvas.width / 3, y: 0 };
     ball.speed = { x: 1, y: 1 };
   }
 
-  function enableInGameListeners() {
+  const enableInGameListeners = () => {
     window.addEventListener('mousemove', paddleUpdateOnMouseMove);
     upateIntervalID = window.setInterval(update, 1000 / 60);
   }
 
-  function disableInGameListeners() {
+  const disableInGameListeners = () => {
     window.removeEventListener('mousemove', paddleUpdateOnMouseMove);
     window.clearTimeout(upateIntervalID);
   }
 
-  function paddleUpdateOnMouseMove(mouseEvent) {
+  const paddleUpdateOnMouseMove = (mouseEvent) => {
     mouseTarget.x = mouseEvent.clientX;
   }
 
-  function appResume(params) {
+  const appResume = (params) => {
     gamePaused = false;
     enableInGameListeners();
   }
 
-  function appPause(params) {
+  const appPause = (params) => {
     gamePaused = true;
     disableInGameListeners();
   }
